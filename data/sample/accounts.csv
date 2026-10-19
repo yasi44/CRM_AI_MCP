@@ -1,0 +1,11 @@
+account,sector,year_established,revenue,employees,office_location,subsidiary_of
+Acme Corporation,technology,1996,1101.16,2822,United States,
+Betasoloin,medical,1999,251.41,495,United States,
+Hottechi,retail,1986,1223.66,3178,Philippines,
+Cancity,software,2011,89.50,310,Germany,Acme Corporation
+Zoomit,telecom,2003,542.10,1480,Kenya,
+Gigaclub,entertainment,1994,430.00,980,United States,
+Sunnamplex,technology,2008,175.90,560,Norway,
+Plexzap,finance,2001,900.25,2100,Japan,Hottechi
+Dambase,services,2015,64.20,150,Italy,
+Konex,marine,1990,320.70,870,Poland,

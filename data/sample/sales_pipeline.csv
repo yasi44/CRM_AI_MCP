@@ -1,0 +1,16 @@
+opportunity_id,sales_agent,product,account,deal_stage,engage_date,close_date,close_value
+S0001,Anna Snelling,GTX Pro,Acme Corporation,Won,2024-01-10,2024-02-20,4821
+S0002,Cassey Cress,MG Special,Betasoloin,Won,2024-01-15,2024-01-30,55
+S0003,Moses Frase,GTX Basic,Hottechi,Lost,2024-02-01,2024-03-15,0
+S0004,Violet Mclelland,GTX Plus Pro,Zoomit,Engaging,2024-02-10,,
+S0005,Anna Snelling,GTX Basic,Gigaclub,Engaging,2024-02-14,,
+S0006,Cassey Cress,GTX Pro,Sunnamplex,Won,2024-03-01,2024-04-02,4821
+S0007,Moses Frase,MG Special,Plexzap,Lost,2024-03-05,2024-03-25,0
+S0008,Violet Mclelland,GTX Pro,Dambase,Engaging,2024-03-12,,
+S0009,Anna Snelling,GTX Plus Pro,Konex,Engaging,2024-01-20,,
+S0010,Cassey Cress,MG Special,,Prospecting,,,
+S0011,Moses Frase,GTX Basic,Cancity,Prospecting,,,
+S0012,Violet Mclelland,GTX Pro,Acme Corporation,Won,2024-04-01,2024-05-10,4821
+S0013,Anna Snelling,MG Special,Hottechi,Engaging,2024-04-08,,
+S0014,Cassey Cress,GTX Plus Pro,Betasoloin,Lost,2024-04-12,2024-05-30,0
+S0015,Moses Frase,GTX Pro,Zoomit,Engaging,2024-02-02,,

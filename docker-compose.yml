@@ -1,0 +1,70 @@
+# Local/production-like stack. Only 3 ports are published, all on localhost.
+# The database is NOT exposed to the host: only containers on the private network reach it.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: crm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: crm
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crm -d crm"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:                       # Python FastAPI REST API: auth, RBAC, audit, business rules
+    build: ./services/api
+    environment:
+      DATABASE_URL: postgres://crm:${POSTGRES_PASSWORD}@db:5432/crm?sslmode=disable   # use sslmode=require with managed DBs
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+    depends_on: { db: { condition: service_healthy } }
+    ports: ["127.0.0.1:8080:8080"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  seed:                      # one-shot job: loads CSV data (+ optional demo users) then exits
+    build: ./services/api
+    command: ["python", "-m", "app.cli", "seed"]
+    environment:
+      DATABASE_URL: postgres://crm:${POSTGRES_PASSWORD}@db:5432/crm?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET}
+      DATA_DIR: /data
+      SEED_DEMO_USERS: ${SEED_DEMO_USERS:-false}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+    volumes: ["${CRM_DATA_DIR:-./data/sample}:/data:ro"]
+    depends_on: { db: { condition: service_healthy } }
+    restart: "no"
+
+  mcp:                       # MCP server (Node/TypeScript): tools, resources, prompts
+    build: ./services/mcp-server
+    environment:
+      CRM_API_URL: http://api:8080
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on: { api: { condition: service_healthy } }
+    ports: ["127.0.0.1:8081:8081"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  agent:                     # AI agent + workflow gateway (Node/TypeScript + Claude)
+    build: ./services/agent
+    environment:
+      MCP_URL: http://mcp:8081/mcp
+      JWT_SECRET: ${JWT_SECRET}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?set ANTHROPIC_API_KEY in .env}
+      MODEL: ${MODEL:-claude-sonnet-5-5}
+    depends_on: { mcp: { condition: service_healthy } }
+    ports: ["127.0.0.1:8082:8082"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
